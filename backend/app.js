@@ -3,12 +3,18 @@ const User = require("./models/user.js");
 
 // dotenv
 require("dotenv").config();
+//cors
+const cors = require("cors");
 
 // express
 const express = require("express");
 const app = express();
 // const PORT = process.env.PORT || 8080;
 const PORT = 3000;
+
+// middlewares
+app.use(express.json());
+app.use(cors());
 
 // mongoDB
 const mongoose = require("mongoose");
@@ -21,26 +27,16 @@ main().then(()=>{
     console.log("Connected MongoDB successfully.");
 }).catch(err => console.log(err));
 
+// routes
+const authRoute = require("./routes/authRoutes.js");
 
-// test route
+// root route
 app.get("/",(req,res)=>{
     res.send("Yes, root route is working.");
 })
 
-// sample user
-app.get("/testuser", async (req, res) => {
-  try {
-    const user = await User.create({
-      name: "Akash",
-      email: "akash@test.com",
-      password: "123456"
-    });
-
-    res.send(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// signUp route 
+app.use("/api/auth",authRoute);
 
 app.listen(PORT,()=>{
     console.log(`Server is running on PORT ${PORT}`);
