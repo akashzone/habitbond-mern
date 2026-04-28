@@ -9,6 +9,7 @@ router.post("/login",login);
 
 //protected route
 router.get("/protected", authMiddleware, (req, res) => {
+  console.log(req.user.id);
   res.json({
     message: "You are authorized",
     user: req.user

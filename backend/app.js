@@ -29,15 +29,20 @@ main().then(()=>{
 
 // routes
 const authRoute = require("./routes/authRoutes.js");
-const authMiddleware = require("./middleware/authMiddleware.js")
+const authMiddleware = require("./middleware/authMiddleware.js");
+const roomRoute = require("./routes/roomRoutes.js");
 
 // root route
 app.get("/",(req,res)=>{
     res.send("Yes, root route is working.");
 })
 
-// signUp route 
+// auth route 
 app.use("/api/auth",authRoute);
+
+// room route
+app.use("/api/room",roomRoute);
+
 
 app.listen(PORT,()=>{
     console.log(`Server is running on PORT ${PORT}`);
