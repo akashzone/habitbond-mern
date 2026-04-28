@@ -1,11 +1,12 @@
 
 const authMiddleware  = require("../middleware/authMiddleware.js");
-const createRoom = require("../controller/roomController");
+const { createRoom,joinRoom } = require("../controller/roomController");
 
 const express = require("express");
 const router = express.Router();
 
 router.post("/create",authMiddleware,createRoom);
+router.post("/join",authMiddleware,joinRoom);
 
 module.exports = router;
 

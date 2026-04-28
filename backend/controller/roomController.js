@@ -25,4 +25,33 @@ async function createRoom(req, res) {
   }
 }
 
-module.exports = createRoom;
+async function joinRoom(req,res){
+  try{
+  const userId = req.user.id;
+  const { roomCode } = req.body;
+  console.log(roomCode);
+  const room = await Room.findOne({roomCode});
+
+  if(!room){
+    return res.status(400).json({
+      message :"Room not Found"
+    })
+  }
+  
+  if(room.members.length >=2){
+    return res.json("Room is fully buddy!");
+  }
+
+  if(room.members.includes(userId)){
+    return res.json("Joined Already!");
+  }
+  
+  room.members.push(userId);
+  await room.save();
+  res.send(room);
+  }catch(err){
+    console.log("Err :",err);
+  }
+}
+
+module.exports = { createRoom, joinRoom };
