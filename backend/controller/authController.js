@@ -40,7 +40,8 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, {
       expiresIn: "7d",
     });
-    res.json({
+    console.log(token);
+    res.send({
       message: "Login successful",
       token,
       user: {
@@ -53,5 +54,7 @@ const login = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
 
 module.exports = { signUp, login };

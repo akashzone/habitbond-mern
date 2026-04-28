@@ -29,6 +29,7 @@ main().then(()=>{
 
 // routes
 const authRoute = require("./routes/authRoutes.js");
+const authMiddleware = require("./middleware/authMiddleware.js")
 
 // root route
 app.get("/",(req,res)=>{
