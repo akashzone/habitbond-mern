@@ -9,11 +9,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-
     const decoded = jwt.verify(token, process.env.JWT_KEY);
-
-    console.log("DECODED:", decoded);
-
     req.user = decoded;
 
     next();
