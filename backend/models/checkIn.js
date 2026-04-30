@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const checkInSchema = new mongoose.Schema({
+let checkInSchema = new mongoose.Schema({
   habitId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Habit",
@@ -25,4 +25,4 @@ const checkInSchema = new mongoose.Schema({
   ],
 }, { timestamps: true });
 
-module.exports = mongoose.model("CheckIn", checkInSchema);
+module.exports = mongoose.models.CheckIn || mongoose.model("CheckIn", checkInSchema);

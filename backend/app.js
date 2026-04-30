@@ -36,6 +36,7 @@ const authMiddleware = require("./middleware/authMiddleware.js");
 const roomRoute = require("./routes/roomRoutes.js");
 const habitRoute = require("./routes/habitRoutes.js");
 const checkInRoute = require("./routes/checkInRoutes.js");
+const appealRoutes = require("./routes/appealRoutes");
 
 // root route
 app.get("/",(req,res)=>{
@@ -53,6 +54,9 @@ app.use("/api/habit",habitRoute);
 
 // checkIn route
 app.use("/api/checkin",checkInRoute);
+
+// appeal route
+app.use("/api/appeals", appealRoutes);
 
 app.listen(PORT,()=>{
     console.log(`Server is running on PORT ${PORT}`);
