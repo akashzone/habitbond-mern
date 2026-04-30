@@ -1,4 +1,5 @@
-const Habit = require("../models/habit.js");
+const Habit = require("../models/habit");
+const Room = require("../models/room");
 const calculateStreak = require("../utils/streak");
 
 const createHabit = async (req, res) => {
