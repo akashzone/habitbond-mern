@@ -1,4 +1,5 @@
 const Habit = require("../models/habit.js");
+const calculateStreak = require("../utils/streak");
 
 const createHabit = async (req, res) => {
   try {
@@ -24,7 +25,23 @@ const getHabits = async (req, res) => {
 
     const habits = await Habit.find({ roomId });
 
-    res.json(habits);
+    const room = await Room.findById(roomId);
+
+    const habitsWithStreak = await Promise.all(
+      habits.map(async (habit) => {
+        const streak = await calculateStreak(
+          habit._id,
+          room.members
+        );
+
+        return {
+          ...habit.toObject(),
+          streak,
+        };
+      })
+    );
+
+    res.json(habitsWithStreak);
 
   } catch (err) {
     res.status(500).json({ error: err.message });
