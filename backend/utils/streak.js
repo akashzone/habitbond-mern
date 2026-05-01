@@ -14,6 +14,7 @@ const calculateStreak = async (habitId, roomMembers) => {
       .filter(e => e.status === "done")
       .map(e => e.userId.toString());
 
+
     const allDone = roomMembers.every(
       userId => doneUsers.includes(userId.toString())
     );
@@ -41,6 +42,7 @@ const calculateStreak = async (habitId, roomMembers) => {
         break;
       }
 
+
       if (appeal.status === "rejected") {
         validDay = false;
         break;
@@ -49,6 +51,7 @@ const calculateStreak = async (habitId, roomMembers) => {
       if (appeal.status === "pending") {
         return streak;
       }
+
     }
 
     if (validDay) {
