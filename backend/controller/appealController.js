@@ -41,6 +41,18 @@ const submitAppeal = async (req, res) => {
       reason,
     });
 
+    const habit = await Habit.findById(habitId);
+    if (habit) {
+      const io = req.app.get("io");
+      if (io) {
+        io.to(habit.roomId.toString()).emit("appeal:new", {
+          habitId,
+          reason,
+          user: req.user
+        });
+      }
+    }
+
     res.status(201).json(appeal);
 
   } catch (err) {
@@ -91,6 +103,14 @@ const respondAppeal = async (req, res) => {
 
     await appeal.save();
 
+    const io = req.app.get("io");
+    if (io && habit) {
+      io.to(habit.roomId.toString()).emit("appeal:response", {
+        appealId,
+        status: appeal.status
+      });
+    }
+
     res.json(appeal);
 
   } catch (err) {
@@ -103,6 +123,7 @@ const getAppeals = async (req, res) => {
     const { habitId } = req.params;
 
     const appeals = await Appeal.find({ habitId })
+      .populate("userId", "name")
       .sort({ createdAt: -1 });
 
     res.json(appeals);

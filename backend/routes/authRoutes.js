@@ -1,11 +1,12 @@
 
-const { signUp, login } = require("../controller/authController.js");
+const { signUp, login, googleLogin } = require("../controller/authController.js");
 const authMiddleware  = require("../middleware/authMiddleware.js");
 const express = require("express");
 const router = express.Router();
 
 router.post("/signup",signUp);
 router.post("/login",login);
+router.post("/google",googleLogin);
 
 //protected route
 router.get("/protected", authMiddleware, (req, res) => {

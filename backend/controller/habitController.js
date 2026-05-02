@@ -13,6 +13,15 @@ const createHabit = async (req, res) => {
       createdBy: userId,
     });
 
+    if (req.io) {
+      req.io.to(roomId.toString()).emit("habit:new", {
+        _id: habit._id,
+        name: habit.name,
+        roomId: habit.roomId,
+        createdBy: habit.createdBy,
+      });
+    }
+
     res.json(habit);
 
   } catch (err) {

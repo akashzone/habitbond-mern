@@ -9,8 +9,38 @@ const cors = require("cors");
 // express
 const express = require("express");
 const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected via socket:", socket.id);
+
+  socket.on("join:room", ({ roomId }) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined socket room: ${roomId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});
+
+app.set("io", io);
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // const PORT = process.env.PORT || 8080;
-const PORT = 3000;
+const PORT = 5000;
 
 // middlewares
 app.use(express.json());
@@ -37,6 +67,7 @@ const roomRoute = require("./routes/roomRoutes.js");
 const habitRoute = require("./routes/habitRoutes.js");
 const checkInRoute = require("./routes/checkInRoutes.js");
 const appealRoutes = require("./routes/appealRoutes");
+const userRoutes = require("./routes/userRoutes.js");
 
 // root route
 app.get("/",(req,res)=>{
@@ -46,11 +77,16 @@ app.get("/",(req,res)=>{
 // auth route 
 app.use("/api/auth",authRoute);
 
+// users route
+app.use("/api/users", userRoutes);
+
 // room route
 app.use("/api/room",roomRoute);
+app.use("/api/rooms",roomRoute);
 
 // habit route
 app.use("/api/habit",habitRoute);
+app.use("/api/habits",habitRoute);
 
 // checkIn route
 app.use("/api/checkin",checkInRoute);
@@ -58,6 +94,6 @@ app.use("/api/checkin",checkInRoute);
 // appeal route
 app.use("/api/appeals", appealRoutes);
 
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     console.log(`Server is running on PORT ${PORT}`);
 })
