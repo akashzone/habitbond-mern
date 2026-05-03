@@ -13,10 +13,15 @@ const updateProfile = async (req, res) => {
     // If file exists -> convert to base64 and upload via cloudinary.uploader.upload
     if (req.file) {
       const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-      const result = await cloudinary.uploader.upload(fileBase64, {
-        folder: "habitbond"
-      });
-      updateData.avatar = result.secure_url;
+      try {
+        const result = await cloudinary.uploader.upload(fileBase64, {
+          folder: "habitbond"
+        });
+        updateData.avatar = result.secure_url;
+      } catch (cloudinaryError) {
+        console.warn("Cloudinary Upload Failed, using base64 fallback:", cloudinaryError.message);
+        updateData.avatar = fileBase64;
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(
