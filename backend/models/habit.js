@@ -14,6 +14,15 @@ const habitSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  editRequest: {
+    newName: { type: String },
+    requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    status: { type: String, enum: ["pending", "accepted", "rejected"] },
+  },
+  deleteRequest: {
+    requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    status: { type: String, enum: ["pending", "accepted", "rejected"] },
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Habit", habitSchema);

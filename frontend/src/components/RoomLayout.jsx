@@ -23,16 +23,16 @@ const RoomLayout = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = async (background = false) => {
     try {
-      setLoading(true);
+      if (!background) setLoading(true);
       setError("");
       const data = await apiFetch(`/room/${roomId}/dashboard`);
       setDashboardData(data);
     } catch (err) {
       setError(err.message || "Failed to load dashboard");
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   };
 
@@ -64,12 +64,20 @@ const RoomLayout = () => {
     socket.on("appeal:new", handleUpdate);
     socket.on("appeal:response", handleUpdate);
     socket.on("habit:new", handleUpdate);
+    socket.on("habit:editRequest", handleUpdate);
+    socket.on("habit:deleteRequest", handleUpdate);
+    socket.on("habit:updated", handleUpdate);
+    socket.on("habit:deleted", handleUpdate);
 
     return () => {
       socket.off("checkin:update", handleUpdate);
       socket.off("appeal:new", handleUpdate);
       socket.off("appeal:response", handleUpdate);
       socket.off("habit:new", handleUpdate);
+      socket.off("habit:editRequest", handleUpdate);
+      socket.off("habit:deleteRequest", handleUpdate);
+      socket.off("habit:updated", handleUpdate);
+      socket.off("habit:deleted", handleUpdate);
       socket.disconnect();
     };
   }, [roomId]);

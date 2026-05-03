@@ -133,4 +133,32 @@ const getAppeals = async (req, res) => {
   }
 };
 
-module.exports = { submitAppeal, respondAppeal, getAppeals };
+const editAppeal = async (req, res) => {
+  try {
+    const { appealId } = req.params;
+    const { reason } = req.body;
+    const userId = req.user.id;
+
+    const appeal = await Appeal.findById(appealId);
+    if (!appeal) {
+      return res.status(404).json({ message: "Appeal not found" });
+    }
+
+    if (appeal.status !== "pending") {
+      return res.status(400).json({ message: "Appeal has already been processed" });
+    }
+
+    if (appeal.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to edit this appeal" });
+    }
+
+    appeal.reason = reason;
+    await appeal.save();
+
+    res.json(appeal);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { submitAppeal, respondAppeal, getAppeals, editAppeal };

@@ -94,21 +94,22 @@ async function getRoomDashboard(req, res) {
             date: today,
             entries: habitCheckIn ? habitCheckIn.entries.map(e => ({ userId: e.userId, status: e.status })) : []
           },
-          pendingAppealsCount
+          pendingAppealsCount,
+          editRequest: habit.editRequest,
+          deleteRequest: habit.deleteRequest
         };
       })
     );
 
-    const pendingAppeals = appeals
-      .filter(a => a.status === "pending")
-      .map(a => ({
-        _id: a._id,
-        habitId: a.habitId,
-        date: a.date,
-        reason: a.reason,
-        status: a.status,
-        user: a.userId ? { _id: a.userId._id, name: a.userId.name } : null
-      }));
+    const allAppeals = appeals.map(a => ({
+      _id: a._id,
+      habitId: a.habitId,
+      date: a.date,
+      reason: a.reason,
+      status: a.status,
+      user: a.userId ? { _id: a.userId._id, name: a.userId.name } : null,
+      userId: a.userId ? { _id: a.userId._id, name: a.userId.name } : null
+    }));
 
     res.json({
       room: {
@@ -117,7 +118,7 @@ async function getRoomDashboard(req, res) {
         members: room.members.map(m => ({ _id: m._id, name: m.name }))
       },
       habits: habitsWithStreak,
-      pendingAppeals,
+      pendingAppeals: allAppeals,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
