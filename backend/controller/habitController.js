@@ -41,7 +41,7 @@ const getHabits = async (req, res) => {
       habits.map(async (habit) => {
         const streak = await calculateStreak(
           habit._id,
-          room.members
+          req.user.id
         );
 
         return {

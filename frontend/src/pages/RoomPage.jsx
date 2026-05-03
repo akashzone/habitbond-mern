@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { Flame, Check, X, ShieldAlert, Trophy } from "lucide-react";
 import { apiFetch } from "../services/api";
 
@@ -16,6 +16,7 @@ const getUserIdFromToken = () => {
 
 const RoomPage = () => {
   const { roomId } = useParams();
+  const navigate = useNavigate();
   const { dashboardData, fetchDashboard } = useOutletContext();
   const { room, habits, pendingAppeals } = dashboardData || {};
 
@@ -28,12 +29,6 @@ const RoomPage = () => {
     (h?.today?.entries || []).some((e) => e.userId === currentUserId && e.status === "done")
   ).length || 0;
   const yourCompletion = totalHabits > 0 ? Math.round((yourDoneCount / totalHabits) * 100) : 0;
-
-  const partnerUser = room?.members?.find((m) => m._id !== currentUserId);
-  const partnerDoneCount = habits?.filter((h) => 
-    (h?.today?.entries || []).some((e) => e.userId === partnerUser?._id && e.status === "done")
-  ).length || 0;
-  const partnerCompletion = totalHabits > 0 ? Math.round((partnerDoneCount / totalHabits) * 100) : 0;
 
   const maxStreak = habits?.reduce((max, h) => Math.max(max, h.streak || 0), 0) || 0;
 
@@ -53,20 +48,38 @@ const RoomPage = () => {
     }
   };
 
+  const handleLeaveRoom = async () => {
+    if (!window.confirm("Are you sure you want to leave this room?")) return;
+    try {
+      await apiFetch(`/rooms/${roomId}/leave`, { method: "POST" });
+      navigate("/");
+    } catch (err) {
+      alert(err.message || "Failed to leave the room");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8">
-      {/* 1. Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white m-0">
-          Workspace Overview
-        </h1>
-        <p className="text-white/60 mt-1 mb-0">
-          Today's progress at a glance
-        </p>
+      {/* 1. Header with Leave Button */}
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white m-0">
+            Workspace Overview
+          </h1>
+          <p className="text-white/60 mt-1 mb-0">
+            Today's progress at a glance
+          </p>
+        </div>
+        <button
+          onClick={handleLeaveRoom}
+          className="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 hover:border-red-500/50 text-red-300 hover:text-red-200 text-sm font-semibold rounded-xl transition-all duration-200"
+        >
+          Leave Room
+        </button>
       </div>
 
       {/* 2. Summary Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Total Habits</span>
           <span className="text-3xl font-extrabold text-white">{totalHabits}</span>
@@ -74,10 +87,6 @@ const RoomPage = () => {
         <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Your Completion</span>
           <span className="text-3xl font-extrabold text-indigo-400">{yourCompletion}%</span>
-        </div>
-        <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
-          <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Partner Completion</span>
-          <span className="text-3xl font-extrabold text-purple-400">{partnerCompletion}%</span>
         </div>
         <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Max Streak</span>
@@ -97,8 +106,6 @@ const RoomPage = () => {
             <div className="flex flex-col gap-2">
               {habits.map((h) => {
                 const entries = h?.today?.entries || [];
-                const isYouDone = entries.some(e => e.userId === currentUserId && e.status === "done");
-                const isPartnerDone = entries.some(e => e.userId === partnerUser?._id && e.status === "done");
 
                 return (
                   <div key={h._id} className="flex justify-between items-center p-3.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-all rounded-xl gap-4">
@@ -109,32 +116,27 @@ const RoomPage = () => {
                       </span>
                     </div>
 
-                    <div className="flex gap-4 items-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-[10px] uppercase text-white/40 tracking-widest font-bold">You</span>
-                        {isYouDone ? (
-                          <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                            <Check size={12} /> Done
-                          </span>
-                        ) : (
-                          <span className="text-xs bg-white/5 text-white/30 px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-[10px] uppercase text-white/40 tracking-widest font-bold">Partner</span>
-                        {isPartnerDone ? (
-                          <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                            <Check size={12} /> Done
-                          </span>
-                        ) : (
-                          <span className="text-xs bg-white/5 text-white/30 px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                            Pending
-                          </span>
-                        )}
-                      </div>
+                    <div className="flex gap-4 items-center flex-wrap">
+                      {room?.members?.map((m) => {
+                        const isMemberDone = entries.some(e => e.userId === m._id && e.status === "done");
+                        const isYou = m._id === currentUserId;
+                        return (
+                          <div key={m._id} className="flex flex-col items-center gap-1">
+                            <span className="text-[10px] uppercase text-white/40 tracking-widest font-bold max-w-[60px] truncate">
+                              {isYou ? "You" : m.name}
+                            </span>
+                            {isMemberDone ? (
+                              <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                <Check size={12} /> Done
+                              </span>
+                            ) : (
+                              <span className="text-xs bg-white/5 text-white/30 px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -151,9 +153,9 @@ const RoomPage = () => {
             <ShieldAlert className="text-red-400" size={18} />
             Pending Appeals
           </h2>
-          {pendingAppeals && pendingAppeals.length > 0 ? (
+          {pendingAppeals && pendingAppeals.filter(a => a.status === "pending").length > 0 ? (
             <div className="flex flex-col gap-3">
-              {pendingAppeals.map((a) => {
+              {pendingAppeals.filter(a => a.status === "pending").map((a) => {
                 const creatorName = typeof a.userId === "object" ? a.userId?.name : "Partner";
                 const isCreator = typeof a.userId === "object" ? a.userId?._id === currentUserId : a.userId === currentUserId;
 

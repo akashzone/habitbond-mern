@@ -1,66 +1,41 @@
-
-const CheckIn = require("../models/CheckIn");
+const CheckIn = require("../models/checkIn.js");
 const Appeal = require("../models/appeal");
 
-const calculateStreak = async (habitId, roomMembers) => {
-  const checkIns = await CheckIn.find({ habitId }).sort({ date: -1 });
+const calculateStreak = async (habitId, currentUserId) => {
+  if (!currentUserId) return 0;
+  const checkIns = await CheckIn.find({ habitId });
 
   let streak = 0;
+  let d = new Date();
+  let today = d.toISOString().split("T")[0];
 
-  for (let checkIn of checkIns) {
-    const date = checkIn.date;
+  while (true) {
+    const dateStr = d.toISOString().split("T")[0];
+    const checkIn = checkIns.find(c => c.date === dateStr);
+    const isDone = checkIn ? checkIn.entries.some(e => e.userId.toString() === currentUserId.toString() && e.status === "done") : false;
 
-    const doneUsers = checkIn.entries
-      .filter(e => e.status === "done")
-      .map(e => e.userId.toString());
-
-
-    const allDone = roomMembers.every(
-      userId => doneUsers.includes(userId.toString())
-    );
-
-    if (allDone) {
+    if (isDone) {
       streak++;
+      d.setDate(d.getDate() - 1);
       continue;
     }
 
-    let validDay = true;
-
-    for (let member of roomMembers) {
-      const userId = member.toString();
-
-      if (doneUsers.includes(userId)) continue;
-
-      const appeal = await Appeal.findOne({
-        habitId,
-        userId,
-        date,
-      });
-
-      if (!appeal) {
-        validDay = false;
-        break;
-      }
-
-
-      if (appeal.status === "rejected") {
-        validDay = false;
-        break;
-      }
-
-      if (appeal.status === "pending") {
-        return streak;
-      }
-
+    if (dateStr === today) {
+      d.setDate(d.getDate() - 1);
+      continue;
     }
 
-    if (validDay) {
+    const appeal = await Appeal.findOne({ habitId, userId: currentUserId, date: dateStr, status: "accepted" });
+    if (appeal) {
       streak++;
-    } else {
-      break;
+      d.setDate(d.getDate() - 1);
+      continue;
     }
+
+    break;
   }
 
   return streak;
 };
+
 module.exports = calculateStreak;

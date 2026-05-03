@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String,
     },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
+    }],
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

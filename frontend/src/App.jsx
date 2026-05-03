@@ -21,24 +21,16 @@ const isAuthenticated = () => {
 
 // Route for pages that require authentication (Dashboard / Habits)
 const PrivateRoute = ({ children }) => {
-  const { currentRoomId } = useRoom();
   if (!isAuthenticated()) {
     return <Navigate to="/login" />;
-  }
-  if (!currentRoomId) {
-    return <Navigate to="/join" />;
   }
   return children;
 };
 
 // Route for pages that require auth but NO room (Join / Create)
 const RequireNoRoomRoute = ({ children }) => {
-  const { currentRoomId } = useRoom();
   if (!isAuthenticated()) {
     return <Navigate to="/login" />;
-  }
-  if (currentRoomId) {
-    return <Navigate to={`/room/${currentRoomId}`} />;
   }
   return children;
 };
