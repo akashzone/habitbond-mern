@@ -79,7 +79,7 @@ const RoomPage = () => {
       </div>
 
       {/* 2. Summary Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Total Habits</span>
           <span className="text-3xl font-extrabold text-white">{totalHabits}</span>
@@ -95,7 +95,7 @@ const RoomPage = () => {
       </div>
 
       {/* 3. Columns: Progress Table + Pending Appeals */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Progress List */}
         <div className="lg:col-span-2 p-6 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -108,7 +108,7 @@ const RoomPage = () => {
                 const entries = h?.today?.entries || [];
 
                 return (
-                  <div key={h._id} className="flex justify-between items-center p-3.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-all rounded-xl gap-4">
+                  <div key={h._id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-all rounded-xl gap-4">
                     <div className="flex flex-col min-w-0">
                       <span className="text-sm font-semibold text-white truncate">{h.name}</span>
                       <span className="text-xs text-white/40 flex items-center gap-1 mt-0.5">
@@ -116,7 +116,7 @@ const RoomPage = () => {
                       </span>
                     </div>
 
-                    <div className="flex gap-4 items-center flex-wrap">
+                    <div className="flex gap-4 items-center flex-wrap sm:justify-end">
                       {room?.members?.map((m) => {
                         const isMemberDone = entries.some(e => e.userId === m._id && e.status === "done");
                         const isYou = m._id === currentUserId;

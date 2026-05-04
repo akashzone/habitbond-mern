@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Outlet } from "react-router-dom";
+import { Menu } from "lucide-react";
 import { apiFetch } from "../services/api";
 import { socket } from "../socket";
 import Sidebar from "./Sidebar";
@@ -22,6 +23,7 @@ const RoomLayout = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchDashboard = async (background = false) => {
     try {
@@ -84,12 +86,10 @@ const RoomLayout = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-layout">
-        <Sidebar roomId={roomId} />
-        <div className="main-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: "var(--text-muted)", fontSize: "1.2rem" }}>
-            Loading workspace...
-          </p>
+      <div className="dashboard-layout flex min-h-screen bg-[#0d0f12] text-white">
+        <Sidebar roomId={roomId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="main-content flex-1 flex items-center justify-center p-4">
+          <p className="text-white/40 text-lg">Loading workspace...</p>
         </div>
       </div>
     );
@@ -97,13 +97,11 @@ const RoomLayout = () => {
 
   if (error) {
     return (
-      <div className="dashboard-layout">
-        <Sidebar roomId={roomId} />
-        <div className="main-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-          <p style={{ color: "var(--error)", fontSize: "1.1rem" }}>{error}</p>
-          <button className="btn" onClick={fetchDashboard}>
-            Retry
-          </button>
+      <div className="dashboard-layout flex min-h-screen bg-[#0d0f12] text-white">
+        <Sidebar roomId={roomId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="main-content flex-1 flex flex-col items-center justify-center gap-4 p-4">
+          <p className="text-red-400 text-lg">{error}</p>
+          <button className="btn" onClick={() => fetchDashboard()}>Retry</button>
         </div>
       </div>
     );
@@ -112,40 +110,50 @@ const RoomLayout = () => {
   const { room } = dashboardData || {};
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout flex min-h-screen bg-[#0d0f12] text-white relative overflow-x-hidden w-full max-w-full">
+      {/* Drawer Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* 1. Sidebar (Left) */}
-      <Sidebar roomId={roomId} />
+      <Sidebar roomId={roomId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* 2. Main Content Area */}
-      <div className="main-content">
+      <div className="main-content flex-1 flex flex-col min-h-screen overflow-y-auto max-w-full w-full">
         {/* Top Header */}
-        <header className="top-header">
-          <div>
-            <span style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginRight: "0.5rem" }}>
-              Room Code:
-            </span>
-            <span className="badge" style={{ backgroundColor: "var(--bg-accent)", fontSize: "0.9rem" }}>
-              {room?.roomCode || "N/A"}
-            </span>
+        <header className="top-header flex justify-between items-center bg-[#0d0f12]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-4 sticky top-0 z-30 gap-4">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 text-white hover:bg-white/5 rounded-lg md:hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
+              aria-label="Open menu"
+            >
+              <Menu size={24} />
+            </button>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+              <span className="text-xs md:text-sm text-white/50">Room Code:</span>
+              <span className="badge bg-white/5 border border-white/10 text-white font-mono text-sm px-2.5 py-1 rounded-lg">
+                {room?.roomCode || "N/A"}
+              </span>
+            </div>
           </div>
 
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <div className="flex flex-wrap gap-2 items-center justify-end">
             {room?.members?.map((m) => {
               const tokenUserId = getUserIdFromToken();
               const isYou = m._id === tokenUserId;
               return (
                 <span
                   key={m._id}
-                  className="badge"
-                  style={{
-                    background: isYou ? "linear-gradient(135deg, #47484c, #1e2023)" : "rgba(255, 255, 255, 0.04)",
-                    color: isYou ? "#fff" : "rgba(255, 255, 255, 0.65)",
-                    border: isYou ? "1px solid rgba(255, 255, 255, 0.45)" : "1px solid rgba(255, 255, 255, 0.08)",
-                    fontSize: "0.85rem",
-                    padding: "0.5rem 1rem",
-                    boxShadow: isYou ? "0 0 15px rgba(255, 255, 255, 0.1)" : "none",
-                    fontWeight: isYou ? "bold" : "normal"
-                  }}
+                  className={`text-xs md:text-sm px-3 py-1.5 rounded-xl border flex items-center ${
+                    isYou 
+                      ? "bg-white/5 border-white/20 text-white font-semibold" 
+                      : "bg-white/[0.02] border-white/5 text-white/60"
+                  }`}
                 >
                   {isYou ? "You" : "Partner"} ({m.name})
                 </span>
@@ -155,7 +163,7 @@ const RoomLayout = () => {
         </header>
 
         {/* Inner Views via Outlet */}
-        <div className="dashboard-container">
+        <div className="dashboard-container flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-full box-border">
           <Outlet context={{ dashboardData, fetchDashboard }} />
         </div>
       </div>

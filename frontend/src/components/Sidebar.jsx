@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Shield, LayoutDashboard, Flame, Settings, LogOut } from "lucide-react";
+import { Shield, LayoutDashboard, Flame, Settings, LogOut, X } from "lucide-react";
 import { useRoom } from "../context/RoomContext";
 import { useUser } from "../context/UserContext";
 import { apiFetch } from "../services/api";
 
-const Sidebar = ({ roomId }) => {
+const Sidebar = ({ roomId, isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { clearRoomId } = useRoom();
   const { user, clearUser } = useUser();
   const [rooms, setRooms] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -40,10 +40,19 @@ const Sidebar = ({ roomId }) => {
   const currentRoom = rooms.find(r => r._id === roomId);
 
   return (
-    <aside className="sidebar flex flex-col justify-between h-full bg-[#111317] border-r border-white/5 p-4 select-none">
+    <aside className={`sidebar flex flex-col justify-between h-full bg-[#111317] border-r border-white/5 p-4 select-none fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 md:w-[280px] max-w-[280px] w-[280px] ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
       <div>
-        <div className="sidebar-logo flex items-center gap-2 font-bold text-xl text-white mb-6 p-2">
-          <Shield size={26} className="text-indigo-500" /> HabitBond
+        <div className="sidebar-logo flex items-center justify-between font-bold text-xl text-white mb-6 p-2">
+          <div className="flex items-center gap-2">
+            <Shield size={26} className="text-indigo-500" /> HabitBond
+          </div>
+          <button 
+            onClick={onClose} 
+            className="text-white/60 hover:text-white md:hidden p-1 rounded hover:bg-white/5"
+            aria-label="Close menu"
+          >
+            <X size={22} />
+          </button>
         </div>
 
         {/* User profile section */}
@@ -67,26 +76,27 @@ const Sidebar = ({ roomId }) => {
           </div>
         </div>
 
-        {/* Room Switcher Inline Panel (pushed content down on open) */}
+        {/* Room Switcher Inline Panel */}
         <div className="flex flex-col gap-1 mb-6">
           <label className="text-[10px] uppercase text-white/40 tracking-wider font-bold mb-1 block">Your Workspace</label>
           <div className="w-full bg-white/5 border border-white/10 rounded-xl overflow-hidden transition-all duration-200">
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsWorkspaceOpen(!isWorkspaceOpen)}
               className="w-full flex justify-between items-center p-3 text-sm text-white font-medium outline-none cursor-pointer hover:bg-white/5 transition-all duration-200"
             >
               <span className="truncate">{currentRoom ? (currentRoom.name || currentRoom.roomCode) : "Select Workspace"}</span>
-              <span className="text-white/40 text-xs">{isOpen ? "▲" : "▼"}</span>
+              <span className="text-white/40 text-xs">{isWorkspaceOpen ? "▲" : "▼"}</span>
             </button>
             
-            {isOpen && (
+            {isWorkspaceOpen && (
               <div className="flex flex-col border-t border-white/5 bg-white/[0.02]">
                 {rooms.map((r) => (
                   <button
                     key={r._id}
                     onClick={() => {
                       navigate(`/room/${r._id}`);
-                      setIsOpen(false);
+                      setIsWorkspaceOpen(false);
+                      onClose?.();
                     }}
                     className={`w-full text-left p-3 text-sm text-white hover:bg-white/5 transition-all truncate border-b border-white/[0.02] ${
                       r._id === roomId ? "text-indigo-400 font-semibold bg-white/5" : ""
@@ -98,7 +108,8 @@ const Sidebar = ({ roomId }) => {
                 <button
                   onClick={() => {
                     navigate("/create");
-                    setIsOpen(false);
+                    setIsWorkspaceOpen(false);
+                    onClose?.();
                   }}
                   className="w-full text-left p-3 text-sm text-indigo-400 hover:bg-white/5 transition-all font-semibold border-b border-white/[0.02]"
                 >
@@ -107,7 +118,8 @@ const Sidebar = ({ roomId }) => {
                 <button
                   onClick={() => {
                     navigate("/join");
-                    setIsOpen(false);
+                    setIsWorkspaceOpen(false);
+                    onClose?.();
                   }}
                   className="w-full text-left p-3 text-sm text-purple-400 hover:bg-white/5 transition-all font-semibold"
                 >
@@ -125,7 +137,10 @@ const Sidebar = ({ roomId }) => {
                 ? "bg-indigo-600/20 text-indigo-400 font-medium" 
                 : "text-white/60 hover:bg-white/5 hover:text-white"
             }`} 
-            onClick={() => navigate(`/room/${roomId}`)}
+            onClick={() => {
+              navigate(`/room/${roomId}`);
+              onClose?.();
+            }}
           >
             <LayoutDashboard size={18} /> Dashboard
           </a>
@@ -135,7 +150,10 @@ const Sidebar = ({ roomId }) => {
                 ? "bg-indigo-600/20 text-indigo-400 font-medium" 
                 : "text-white/60 hover:bg-white/5 hover:text-white"
             }`} 
-            onClick={() => navigate(`/room/${roomId}/habits`)}
+            onClick={() => {
+              navigate(`/room/${roomId}/habits`);
+              onClose?.();
+            }}
           >
             <Flame size={18} /> Habits
           </a>
@@ -145,7 +163,10 @@ const Sidebar = ({ roomId }) => {
                 ? "bg-indigo-600/20 text-indigo-400 font-medium" 
                 : "text-white/60 hover:bg-white/5 hover:text-white"
             }`} 
-            onClick={() => navigate(`/room/${roomId}/settings`)}
+            onClick={() => {
+              navigate(`/room/${roomId}/settings`);
+              onClose?.();
+            }}
           >
             <Settings size={18} /> Settings
           </a>
@@ -154,7 +175,10 @@ const Sidebar = ({ roomId }) => {
 
       <button 
         className="btn btn-secondary btn-sm mt-auto" 
-        onClick={handleLogout} 
+        onClick={() => {
+          handleLogout();
+          onClose?.();
+        }} 
         style={{ width: "100%", gap: "0.5rem", display: "flex", justifyContent: "center", alignItems: "center" }}
       >
         <LogOut size={16} /> Log Out
