@@ -35,10 +35,21 @@ const RequireNoRoomRoute = ({ children }) => {
   return children;
 };
 
+import { useUser } from "./context/UserContext";
+
 // Route for public marketing/auth pages (Landing / Login / Signup)
 const GuestRoute = ({ children }) => {
   const { currentRoomId } = useRoom();
+  const { loading } = useUser();
+
   if (isAuthenticated()) {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-[#0d0f12] text-white flex items-center justify-center font-medium">
+          Loading...
+        </div>
+      );
+    }
     return currentRoomId ? <Navigate to={`/room/${currentRoomId}`} /> : <Navigate to="/join" />;
   }
   return children;

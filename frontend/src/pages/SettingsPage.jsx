@@ -40,7 +40,8 @@ const SettingsPage = () => {
       }
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/users/me", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const res = await fetch(`${apiUrl}/users/me`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`

@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../services/api";
 import { Shield } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
+import { useUser } from "../context/UserContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,6 +34,7 @@ const LoginPage = () => {
         if (data.user && data.user.id) {
           localStorage.setItem("userId", data.user.id);
         }
+        await fetchUser();
         navigate("/");
       } else {
         setError(typeof data === "string" ? data : "Invalid login credentials");
@@ -107,7 +110,8 @@ const LoginPage = () => {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 try {
-                  const res = await fetch("http://localhost:5000/api/auth/google", {
+                  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+                  const res = await fetch(`${apiUrl}/auth/google`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json"
@@ -124,6 +128,7 @@ const LoginPage = () => {
                     if (data.user && data.user._id) {
                       localStorage.setItem("userId", data.user._id);
                     }
+                    await fetchUser();
                     navigate("/");
                   } else {
                     setError("Google login failed");

@@ -16,12 +16,14 @@ export const UserProvider = ({ children }) => {
     }
 
     try {
+      setLoading(true);
       const data = await apiFetch("/users/me", {
         method: "GET"
       });
       if (data && data._id) {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
+        return data;
       }
     } catch (err) {
       console.error("Failed to fetch user in context:", err.message);

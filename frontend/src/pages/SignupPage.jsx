@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../services/api";
 import { Shield } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
+import { useUser } from "../context/UserContext";
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useUser();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +41,7 @@ const SignupPage = () => {
         if (loginData.user && loginData.user.id) {
           localStorage.setItem("userId", loginData.user.id);
         }
+        await fetchUser();
         navigate("/");
       } else {
         navigate("/login");
@@ -126,7 +129,8 @@ const SignupPage = () => {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 try {
-                  const res = await fetch("http://localhost:5000/api/auth/google", {
+                  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+                  const res = await fetch(`${apiUrl}/auth/google`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json"
@@ -143,6 +147,7 @@ const SignupPage = () => {
                     if (data.user && data.user._id) {
                       localStorage.setItem("userId", data.user._id);
                     }
+                    await fetchUser();
                     navigate("/");
                   } else {
                     setError("Google signup failed");

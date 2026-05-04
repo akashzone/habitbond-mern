@@ -40,7 +40,7 @@ const login = async (req, res) => {
       res.send("wrong credentials.");
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || process.env.JWT_KEY, {
       expiresIn: "7d",
     });
     console.log(token);
@@ -51,6 +51,7 @@ const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        rooms: user.rooms,
       },
     });
   } catch (err) {
@@ -85,7 +86,7 @@ const googleLogin = async (req, res) => {
 
     const jwtToken = jwt.sign(
       { id: user._id },
-      process.env.JWT_KEY,
+      process.env.JWT_SECRET || process.env.JWT_KEY,
       { expiresIn: "7d" }
     );
 
@@ -95,7 +96,8 @@ const googleLogin = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
+        rooms: user.rooms
       }
     });
   } catch (err) {
