@@ -4,8 +4,8 @@ import HabitItem from "./HabitItem";
 const HabitList = ({ habits, roomMembers, checkIns, appeals, refresh }) => {
   if (!habits?.length) {
     return (
-      <div className="dashboard-card" style={{ textAlign: "center", padding: "2.5rem 1.5rem" }}>
-        <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", margin: 0 }}>
+      <div className="dashboard-card w-full text-center p-6 sm:p-10">
+        <p className="text-white/50 text-base sm:text-lg m-0">
           No habits created in this room yet.
         </p>
       </div>
@@ -13,7 +13,7 @@ const HabitList = ({ habits, roomMembers, checkIns, appeals, refresh }) => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+    <div className="flex flex-col gap-4 w-full max-w-full overflow-x-hidden">
       {habits.map((habit) => (
         <HabitItem
           key={habit._id}

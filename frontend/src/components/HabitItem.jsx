@@ -93,12 +93,12 @@ const HabitItem = ({ habit, roomMembers, appeals, refresh }) => {
   };
 
   return (
-    <div className="relative overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] rounded-2xl p-6 md:p-8 mb-8 transition-all duration-200 hover:border-white/20 flex flex-col gap-6">
+    <div className="relative overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] rounded-2xl p-4 sm:p-6 md:p-8 mb-6 transition-all duration-200 hover:border-white/20 flex flex-col gap-6 w-full max-w-full">
       <div className="absolute inset-0 pointer-events-none rounded-2xl bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5"></div>
 
-      <div className="relative z-10 flex justify-between items-start flex-wrap gap-4">
+      <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start gap-4">
         {isEditingHabit ? (
-          <div className="flex flex-col gap-2 flex-1">
+          <div className="flex flex-col gap-2 flex-1 w-full min-w-0">
             <input
               type="text"
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 outline-none text-white placeholder-white/30"
@@ -123,12 +123,12 @@ const HabitItem = ({ habit, roomMembers, appeals, refresh }) => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-white m-0 flex items-center gap-3">
+          <div className="flex flex-col gap-2 flex-1 w-full min-w-0">
+            <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+              <h3 className="text-lg sm:text-xl font-semibold text-white m-0 flex items-center gap-3 break-words">
                 {habit.name}
                 {habit.pendingAppealsCount > 0 && (
-                  <span className="text-xs font-bold bg-amber-500/20 text-amber-500 px-2 py-1 rounded-full border border-amber-500/30">
+                  <span className="text-[10px] font-bold bg-amber-500/20 text-amber-500 px-2 py-1 rounded-full border border-amber-500/30 flex-shrink-0">
                     {habit.pendingAppealsCount} Pending
                   </span>
                 )}

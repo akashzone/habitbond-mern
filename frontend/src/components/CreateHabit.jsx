@@ -36,17 +36,16 @@ const CreateHabit = ({ roomId, refresh }) => {
       <h3 className="card-title" style={{ fontSize: "1.1rem", margin: "0 0 0.5rem 0" }}>
         Add a New Habit
       </h3>
-      <form onSubmit={handleCreate} style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+      <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3">
         <input
           type="text"
-          className="form-input"
-          style={{ flex: 1, minWidth: "200px" }}
+          className="form-input flex-1 min-w-0 w-full"
           placeholder="e.g., Drink water"
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={loading}
         />
-        <button type="submit" className="btn" disabled={loading}>
+        <button type="submit" className="btn w-full sm:w-auto flex-shrink-0" disabled={loading}>
           {loading ? "Adding..." : "Add Habit"}
         </button>
       </form>

@@ -71,9 +71,9 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="dashboard-card max-w-lg mx-auto bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 lg:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
-      <h1 className="text-2xl font-bold text-white m-0">Account Settings</h1>
-      <p className="text-white/60 mt-1 mb-6">Update your account information</p>
+    <div className="dashboard-card w-full max-w-lg mx-auto bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-6 lg:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
+      <h1 className="text-xl sm:text-2xl font-bold text-white m-0">Account Settings</h1>
+      <p className="text-white/60 mt-1 mb-6 text-sm">Update your account information</p>
 
       {success && (
         <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl text-sm mb-6 text-center">
@@ -111,7 +111,7 @@ const SettingsPage = () => {
 
         <div>
           <label className="block text-sm text-white/60 mb-2 font-medium">Profile Image</label>
-          <div className="flex gap-4 items-center mb-2">
+          <div className="flex flex-col sm:flex-row gap-4 items-center mb-2">
             <div className="w-16 h-16 rounded-full border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
               {preview || avatar ? (
                 <img src={preview || avatar} alt="Avatar Preview" className="w-full h-full object-cover" />

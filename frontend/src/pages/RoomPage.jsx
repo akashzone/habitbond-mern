@@ -59,70 +59,70 @@ const RoomPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 w-full max-w-full overflow-x-hidden">
       {/* 1. Header with Leave Button */}
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white m-0">
+      <div className="flex justify-between items-start flex-col sm:flex-row sm:items-center gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-white m-0 break-words">
             Workspace Overview
           </h1>
-          <p className="text-white/60 mt-1 mb-0">
+          <p className="text-white/60 mt-1 mb-0 text-sm">
             Today's progress at a glance
           </p>
         </div>
         <button
           onClick={handleLeaveRoom}
-          className="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 hover:border-red-500/50 text-red-300 hover:text-red-200 text-sm font-semibold rounded-xl transition-all duration-200"
+          className="w-full sm:w-auto px-4 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 hover:border-red-500/50 text-red-300 hover:text-red-200 text-sm font-semibold rounded-xl transition-all duration-200 text-center"
         >
           Leave Room
         </button>
       </div>
 
       {/* 2. Summary Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        <div className="p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Total Habits</span>
-          <span className="text-3xl font-extrabold text-white">{totalHabits}</span>
+          <span className="text-2xl sm:text-3xl font-extrabold text-white">{totalHabits}</span>
         </div>
-        <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
+        <div className="p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Your Completion</span>
-          <span className="text-3xl font-extrabold text-indigo-400">{yourCompletion}%</span>
+          <span className="text-2xl sm:text-3xl font-extrabold text-indigo-400">{yourCompletion}%</span>
         </div>
-        <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
+        <div className="p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-1 backdrop-blur-xl">
           <span className="text-xs uppercase tracking-wider text-white/40 font-semibold">Max Streak</span>
-          <span className="text-3xl font-extrabold text-amber-400">{maxStreak}</span>
+          <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">{maxStreak}</span>
         </div>
       </div>
 
       {/* 3. Columns: Progress Table + Pending Appeals */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         {/* Progress List */}
-        <div className="lg:col-span-2 p-6 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <div className="lg:col-span-2 p-4 sm:p-6 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
+          <h2 className="text-base sm:text-lg font-bold mb-4 flex items-center gap-2">
             <Trophy className="text-amber-400" size={18} />
             Today's Progress
           </h2>
           {totalHabits > 0 ? (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               {habits.map((h) => {
                 const entries = h?.today?.entries || [];
 
                 return (
                   <div key={h._id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-all rounded-xl gap-4">
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-semibold text-white truncate">{h.name}</span>
+                      <span className="text-sm font-semibold text-white truncate break-words">{h.name}</span>
                       <span className="text-xs text-white/40 flex items-center gap-1 mt-0.5">
                         <Flame size={12} className="text-orange-400" /> {h.streak || 0} days streak
                       </span>
                     </div>
 
-                    <div className="flex gap-4 items-center flex-wrap sm:justify-end">
+                    <div className="flex gap-4 items-center flex-wrap sm:justify-end w-full sm:w-auto">
                       {room?.members?.map((m) => {
                         const isMemberDone = entries.some(e => e.userId === m._id && e.status === "done");
                         const isYou = m._id === currentUserId;
                         return (
-                          <div key={m._id} className="flex flex-col items-center gap-1">
-                            <span className="text-[10px] uppercase text-white/40 tracking-widest font-bold max-w-[60px] truncate">
+                          <div key={m._id} className="flex flex-row items-center justify-between sm:flex-col sm:items-center gap-2 flex-1 sm:flex-initial bg-white/[0.01] sm:bg-transparent border sm:border-0 border-white/[0.03] p-2 sm:p-0 rounded-xl">
+                            <span className="text-[10px] uppercase text-white/40 tracking-widest font-bold max-w-[80px] truncate">
                               {isYou ? "You" : m.name}
                             </span>
                             {isMemberDone ? (
@@ -148,8 +148,8 @@ const RoomPage = () => {
         </div>
 
         {/* Actionable Appeals Panel */}
-        <div className="p-6 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl flex flex-col h-fit">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl flex flex-col h-fit w-full">
+          <h2 className="text-base sm:text-lg font-bold mb-4 flex items-center gap-2">
             <ShieldAlert className="text-red-400" size={18} />
             Pending Appeals
           </h2>
@@ -161,20 +161,20 @@ const RoomPage = () => {
 
                 return (
                   <div key={a._id} className="p-3 bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition-all rounded-xl flex flex-col gap-3">
-                    <p className="m-0 text-sm text-white/90 leading-snug">
+                    <p className="m-0 text-sm text-white/90 leading-snug break-words">
                       <b className="font-semibold text-white">{creatorName}</b>: {a.reason}
                     </p>
                     {a.status === "pending" && !isCreator && (
                       <div className="flex gap-2">
                         <button
                           onClick={() => respondToAppeal(a._id, "accepted")}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-green-400 bg-green-500/10 border border-green-500/30 transition-all hover:bg-green-500/20"
+                          className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-green-400 bg-green-500/10 border border-green-500/30 transition-all hover:bg-green-500/20"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => respondToAppeal(a._id, "rejected")}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/30 transition-all hover:bg-red-500/20"
+                          className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/30 transition-all hover:bg-red-500/20"
                         >
                           Reject
                         </button>
@@ -191,28 +191,28 @@ const RoomPage = () => {
       </div>
 
       {/* 4. Highlights Section */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         {bestStreakHabit && (
-          <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
+          <div className="p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
             <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30 flex-shrink-0">
               <Trophy className="text-amber-400" size={20} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-xs uppercase text-white/40 tracking-wider font-bold">Best Streak</span>
-              <span className="text-base font-bold text-white">{bestStreakHabit.name}</span>
+              <span className="text-sm sm:text-base font-bold text-white truncate break-words">{bestStreakHabit.name}</span>
               <span className="text-xs text-amber-400/80 font-medium">{bestStreakHabit.streak || 0} days streak</span>
             </div>
           </div>
         )}
 
         {atRiskHabits && atRiskHabits.length > 0 && (
-          <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
+          <div className="p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
             <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center border border-red-500/30 flex-shrink-0">
               <ShieldAlert className="text-red-400" size={20} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-xs uppercase text-white/40 tracking-wider font-bold">At-Risk Streaks</span>
-              <span className="text-base font-bold text-white">Action Required</span>
+              <span className="text-sm sm:text-base font-bold text-white">Action Required</span>
               <span className="text-xs text-red-400/80 font-medium">Don't miss checking in today!</span>
             </div>
           </div>

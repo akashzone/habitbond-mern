@@ -30,7 +30,7 @@ const CheckInButton = ({ habitId, isDone, refresh }) => {
     return (
       <button 
         disabled 
-        className="px-4 py-2 rounded-xl text-sm font-semibold bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed"
+        className="w-full sm:w-auto px-4 py-2 rounded-xl text-sm font-semibold bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed text-center"
       >
         Completed Today
       </button>
@@ -38,11 +38,11 @@ const CheckInButton = ({ habitId, isDone, refresh }) => {
   }
 
   return (
-    <div className="flex flex-col items-end sm:items-end w-full sm:w-auto gap-1.5">
+    <div className="flex flex-col items-center sm:items-end w-full sm:w-auto gap-1.5">
       <button 
         onClick={handleCheckIn} 
         disabled={loading}
-        className="w-full sm:w-auto px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-300 hover:from-indigo-400 hover:to-purple-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:bg-white/10 disabled:from-transparent disabled:to-transparent disabled:text-white/40 disabled:shadow-none disabled:border disabled:border-white/5 disabled:cursor-not-allowed"
+        className="w-full sm:w-auto px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-300 hover:from-indigo-400 hover:to-purple-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:bg-white/10 disabled:from-transparent disabled:to-transparent disabled:text-white/40 disabled:shadow-none disabled:border disabled:border-white/5 disabled:cursor-not-allowed text-center"
       >
         {loading ? "Checking In..." : "Mark Done"}
       </button>

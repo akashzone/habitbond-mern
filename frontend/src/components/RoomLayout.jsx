@@ -5,6 +5,7 @@ import { apiFetch } from "../services/api";
 import { socket } from "../socket";
 import Sidebar from "./Sidebar";
 import { useRoom } from "../context/RoomContext";
+import { useUser } from "../context/UserContext";
 
 const getUserIdFromToken = () => {
   const token = localStorage.getItem("token");
@@ -20,6 +21,7 @@ const getUserIdFromToken = () => {
 const RoomLayout = () => {
   const { roomId } = useParams();
   const { saveRoomId } = useRoom();
+  const { user } = useUser();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -125,31 +127,36 @@ const RoomLayout = () => {
       {/* 2. Main Content Area */}
       <div className="main-content flex-1 flex flex-col min-h-screen overflow-y-auto max-w-full w-full">
         {/* Top Header */}
-        <header className="top-header flex justify-between items-center bg-[#0d0f12]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-4 sticky top-0 z-30 gap-4">
+        <header className="top-header flex justify-between items-center bg-[#0d0f12]/80 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-3 md:py-4 sticky top-0 z-30 gap-4 w-full select-none">
+          {/* Hamburger + Workspace Selector */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setSidebarOpen(true)}
               className="p-2 text-white hover:bg-white/5 rounded-lg md:hidden flex items-center justify-center flex-shrink-0 cursor-pointer"
               aria-label="Open menu"
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-              <span className="text-xs md:text-sm text-white/50">Room Code:</span>
-              <span className="badge bg-white/5 border border-white/10 text-white font-mono text-sm px-2.5 py-1 rounded-lg">
-                {room?.roomCode || "N/A"}
-              </span>
+            <div className="flex items-center gap-2">
+              <span className="text-white font-bold text-lg hidden md:inline">HabitBond</span>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                <span className="text-xs md:text-sm text-white/50">Room:</span>
+                <span className="badge bg-white/5 border border-white/10 text-white font-mono text-xs sm:text-sm px-2 py-0.5 sm:py-1 rounded-lg">
+                  {room?.roomCode || "N/A"}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 items-center justify-end">
+          {/* Avatars / Account Pill */}
+          <div className="flex flex-wrap gap-1.5 items-center justify-end">
             {room?.members?.map((m) => {
               const tokenUserId = getUserIdFromToken();
               const isYou = m._id === tokenUserId;
               return (
                 <span
                   key={m._id}
-                  className={`text-xs md:text-sm px-3 py-1.5 rounded-xl border flex items-center ${
+                  className={`text-[10px] sm:text-xs md:text-sm px-2 sm:px-3 py-1 rounded-xl border flex items-center gap-1.5 break-words ${
                     isYou 
                       ? "bg-white/5 border-white/20 text-white font-semibold" 
                       : "bg-white/[0.02] border-white/5 text-white/60"
@@ -163,7 +170,7 @@ const RoomLayout = () => {
         </header>
 
         {/* Inner Views via Outlet */}
-        <div className="dashboard-container flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-full box-border">
+        <div className="dashboard-container flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-full box-border overflow-x-hidden">
           <Outlet context={{ dashboardData, fetchDashboard }} />
         </div>
       </div>
