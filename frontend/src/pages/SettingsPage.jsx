@@ -40,7 +40,11 @@ const SettingsPage = () => {
       }
 
       const token = localStorage.getItem("token");
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      let apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      apiUrl = apiUrl.replace(/\/+$/, "");
+      if (!apiUrl.endsWith("/api")) {
+        apiUrl = `${apiUrl}/api`;
+      }
       const res = await fetch(`${apiUrl}/users/me`, {
         method: "PATCH",
         headers: {
