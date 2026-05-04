@@ -123,7 +123,7 @@ function AppRoutes() {
 }
 
 function App() {
-  const GOOGLE_CLIENT_ID = "288581775000-ej0bnsh423f6f2t7b7tr68ecjbllm11a.apps.googleusercontent.com";
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "288581775000-ej0bnsh423f6f2t7b7tr68ecjbllm11a.apps.googleusercontent.com";
   
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
