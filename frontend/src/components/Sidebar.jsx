@@ -40,9 +40,10 @@ const Sidebar = ({ roomId, isOpen, onClose }) => {
   const currentRoom = rooms.find(r => r._id === roomId);
 
   return (
-    <aside className={`sidebar flex flex-col justify-between bg-[#111317] border-r border-white/5 p-4 select-none fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out h-full md:h-screen md:sticky md:top-0 md:inset-auto md:z-10 w-[280px] max-w-[280px] flex-shrink-0 ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+    <aside className={`sidebar flex flex-col justify-between bg-[#111317] border-r border-white/5 p-4 select-none fixed inset-y-0 left-0 z-[100] transform transition-transform duration-300 ease-in-out h-full md:h-screen md:sticky md:top-0 md:inset-auto md:z-10 w-[85vw] max-w-[320px] md:w-[280px] md:max-w-[280px] flex-shrink-0 ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
       <div>
         <div className="sidebar-logo flex items-center justify-between font-bold text-xl text-white mb-6 p-2">
+
           <div className="flex items-center gap-2">
             <Shield size={26} className="text-indigo-500" /> HabitBond
           </div>

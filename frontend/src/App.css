@@ -52,9 +52,9 @@ body {
   flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
-  z-index: 10;
   box-shadow: inset -10px 0 20px rgba(0, 0, 0, 0.3);
 }
+
 
 
 .sidebar-logo {
@@ -120,8 +120,8 @@ body {
   padding: 0 2.5rem;
   position: sticky;
   top: 0;
-  z-index: 50;
 }
+
 
 .dashboard-container {
   padding: 2.5rem;
