@@ -129,20 +129,14 @@ const SignupPage = () => {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 try {
-                  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-                  const res = await fetch(`${apiUrl}/auth/google`, {
+                  const data = await apiFetch("/auth/google", {
                     method: "POST",
-                    headers: {
-                      "Content-Type": "application/json"
-                    },
                     body: JSON.stringify({
-                      token: credentialResponse.credential
-                    })
+                      token: credentialResponse.credential,
+                    }),
                   });
 
-                  const data = await res.json();
-                  
-                  if (data.token) {
+                  if (data && data.token) {
                     localStorage.setItem("token", data.token);
                     if (data.user && data.user._id) {
                       localStorage.setItem("userId", data.user._id);
@@ -154,7 +148,7 @@ const SignupPage = () => {
                   }
                 } catch (err) {
                   console.error("Google signup failed", err);
-                  setError("Google signup failed");
+                  setError(err.message || "Google signup failed");
                 }
               }}
               onError={() => {

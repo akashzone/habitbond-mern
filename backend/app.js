@@ -44,7 +44,13 @@ const PORT = process.env.PORT || 5000;
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://habitbond-mern.vercel.app"
+  ],
+  credentials: true
+}));
 
 // mongoDB
 const mongoose = require("mongoose");

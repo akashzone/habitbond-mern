@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
     let { name, email, password } = req.body;
     let checkEmail = await User.findOne({ email });
     if (checkEmail) {
-      console.log("Email already exist.");
+      return res.status(400).json({ message: "Email already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -19,12 +19,13 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.send({
+    res.status(201).json({
       message: "User created successfully",
       user,
     });
   } catch (err) {
     console.log("Err :", err);
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -33,18 +34,20 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      res.send("wrong credentials!");
+      return res.status(401).json({ message: "Wrong credentials" });
     }
-    const isMatch = bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.send("wrong credentials.");
+      return res.status(401).json({ message: "Wrong credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || process.env.JWT_KEY, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || process.env.JWT_KEY,
+      { expiresIn: "7d" }
+    );
     console.log(token);
-    res.send({
+    res.json({
       message: "Login successful",
       token,
       user: {
@@ -55,11 +58,9 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
-
-
 
 const googleLogin = async (req, res) => {
   try {
@@ -80,7 +81,7 @@ const googleLogin = async (req, res) => {
         name,
         email,
         password: "google-oauth",
-        avatar: picture
+        avatar: picture,
       });
     }
 
@@ -97,11 +98,12 @@ const googleLogin = async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        rooms: user.rooms
-      }
+        rooms: user.rooms,
+      },
     });
   } catch (err) {
-    res.status(500).json({ error: "Google login failed" });
+    console.error("Google login backend error:", err);
+    res.status(500).json({ message: "Google login failed" });
   }
 };
 
